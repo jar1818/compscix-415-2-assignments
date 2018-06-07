@@ -1,0 +1,51 @@
+---
+title: "COMPSCIX 415.2 Homework 1"
+author: "Jared Lee"
+date: "6/6/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+My Github repository for my assignments can be found at this URL: https://github.com/jar1818/compscix-415-2-assignments.git 
+
+```{r warning=FALSE, message=FALSE}
+library(mdsr)
+```
+
+```{r}
+library(tidyverse)
+```
+  
+```{r load_packages, warning=FALSE, message=FALSE}
+data("WorldCities")
+```
+
+# QUESTION 1
+```{r}
+glimpse(WorldCities)
+```
+
+There are **23,018** observations in the WorldCities data. Some of the variable names are *code*, *name*, *latitude*, *longitude*, and *country*.
+
+```{r}
+WorldCities <- head(WorldCities, 200)
+```
+
+```{r}
+country_col <- WorldCities$country
+```
+
+```{r}
+unique(country_col)
+```
+
+# QUESTION 2
+
+I made some style and removed warnings above. 
+Finished questions 1 and 2
+
+
+
