@@ -24,28 +24,71 @@ data("WorldCities")
 ```
 
 # QUESTION 1
+
+View sample of the data WorldCities
 ```{r}
 glimpse(WorldCities)
 ```
 
 There are **23,018** observations in the WorldCities data. Some of the variable names are *code*, *name*, *latitude*, *longitude*, and *country*.
 
+View 200 obersrvations for all varibles 
 ```{r}
 WorldCities <- head(WorldCities, 200)
 ```
 
+View country obervations
 ```{r}
 country_col <- WorldCities$country
 ```
 
+View distinct countries
 ```{r}
 unique(country_col)
 ```
 
 # QUESTION 2
 
-I made some style and removed warnings above. 
-Finished questions 1 and 2
+### Compile and commit
+I made some style changes (bold, italics) and removed warnings above. 
+
+View country observations using Select
+```{r}
+country_col <- select(WorldCities, country)
+```
+
+View country observations using %>% and Select
+```{r}
+country_col <- WorldCities %>% select(country)
+```
+
+View top 5 overservations of Region variable
+```{r}
+WorldCities %>% select(region) %>% head(5)
+```
 
 
+# QUESTION 3
+
+View distinct Countries using two pipe operators
+```{r}
+WorldCities %>% select(country) %>% unique()
+```
+
+Plot population observations
+```{r}
+WorldCities %>% ggplot(aes(x = population)) + geom_histogram()
+```
+
+Change X axis label to 'City Population'
+```{r}
+WorldCities %>% ggplot(aes(x = population)) + geom_histogram() + xlab('City Population')
+```
+
+# Question 4
+
+Plot population with new x label, new y label, new title, and white background
+```{r}
+WorldCities %>% ggplot(aes(x = population)) + geom_histogram() + ylab('y axis') + xlab('x axis') + ggtitle('my title') + theme_bw()
+```
 
