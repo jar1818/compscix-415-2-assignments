@@ -92,3 +92,4 @@ Plot population with new x label, new y label, new title, and white background
 WorldCities %>% ggplot(aes(x = population)) + geom_histogram() + ylab('y axis') + xlab('x axis') + ggtitle('my title') + theme_bw()
 ```
 
+
