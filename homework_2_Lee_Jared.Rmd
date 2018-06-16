@@ -1,0 +1,277 @@
+---
+title: "homework_2_Lee_Jared"
+author: "Jared Lee"
+date: "6/12/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(mdsr)
+```
+
+
+## Section 3.2.4: all exercises
+### 1) Run ggplot(data = mpg). What do you see?
+
+Answer: ggplot(data = mpg) shows an empty graph.
+```{r}
+ggplot(data = mpg)
+```
+
+### 2) How many rows are in mpg? How many columns?
+Answer: 
+rows: 234
+columns: 11
+```{r}
+glimpse(mpg)
+```
+
+### 3) What does the drv variable describe? Read the help for ?mpg to find out.
+Answer: 
+drv describes the drive train.
+f = front-wheel drive, r = rear wheel drive, 4 = 4wd
+```{r}
+?mpg
+```
+
+### 4) Make a scatterplot of hwy vs cyl.
+Answer: 
+```{r}
+ggplot(mpg) +
+  geom_point(aes(x = hwy, y = cyl))
+```
+
+### 5) What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
+Answer: 
+Both variables are descrete, so showing a table or raw numbers is a better visualization. 
+```{r}
+ggplot(mpg) +
+  geom_point(aes(class, drv))
+```
+
+
+##Section 3.3.1: all exercises
+### 1) What’s gone wrong with this code? Why are the points not blue?
+
+Since color = "blue" is inside the aesthetic function, R treats it like a dimension to be added as opposed to a color treatment. This should be outside of aes() instead.
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+
+### 2) Which variables in mpg are categorical? Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). How can you see this information when you run mpg?
+
+manufacturer: categorical,
+
+displ: continuous,
+
+year: categorical,
+
+cyl: categorical,
+
+trans: categorical,
+
+drv: categorical,
+
+cty: continuous,
+
+hwy: continuous,
+
+fl: categorical,
+
+class: categorical
+
+```{r}
+glimpse(mpg)
+```
+
+
+### 3) Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables? **
+
+For color, continuous variables show a gradient. For categorical, each variable has their own unique color. 
+Similarly with size, continuous variables are a scale of size from small to large. And categorical variables get their own unique size. 
+
+For Shape, continuous variables cannot be used as there is no scale for shapes.
+```{r}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, y = hwy, shape = class))
+```
+
+### 4) What happens if you map the same variable to multiple aesthetics?
+It creates a linear line. 
+
+```{r}
+ggplot(mpg) + 
+  geom_point(aes(x = hwy, y = hwy))
+```
+
+
+### 5) What does the stroke aesthetic do? What shapes does it work with? (Hint: use ?geom_point)
+
+The stroke aesthetic defines the width or thickness of the border of the points. 
+```{r}
+?geom_point
+```
+
+
+```{r}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, y = hwy, shape = class, stroke = 5))
+```
+
+
+
+### 6) What happens if you map an aesthetic to something other than a variable name, like aes(colour = displ < 5)?
+A boolean is created. 
+```{r}
+ggplot(mpg) +
+  geom_point(aes(x = hwy, y = class, colour = drv < 5))
+```
+
+
+##Section 3.5.1: #4 and #5 only
+
+### 4) Take the first faceted plot in this section. What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? 
+####Advantage: 
+It's visually easier to see observations by isolating them on a separate graph(s). 
+####Disadvantage: 
+There can be too many graphs where the viewer doesn't know where to look. Also, it's difficult to compare behaviors of one descrete variable to another with so many graphs. 
+#### How might the balance change if you had a larger dataset?
+With a large dataset, there may be too many graphs to look at and comparative analysis would be difficult.
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+###5) Read ?facet_wrap. What does nrow do? What does ncol do? 
+
+nrow is how you define the number of rows
+ncol is how you define the number of columns
+
+####What other options control the layout of the individual panels? 
+scales - set the scales of the axises to fixed or free
+shrink - shrinks the scales to fit the statistics
+labeller - A function that takes one data frame of labels and returns a list or data frame of character vectors
+as.table - facets are laid out like a table with highest values at the bottom-right.
+switch - choose which graph contains the lables
+
+####Why doesn’t facet_grid() have nrow and ncol argument?
+With facet_grid(), rows and columns should be defined by the number of unique values for that variable.
+
+```{r}
+?facet_wrap
+```
+
+
+##Section 3.6.1: #1-5. Extra Credit: Do #6
+###1) What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
+Line chart: geom_line()
+Boxplot: geom_boxplot()
+Histogram: geom_histogram()
+Area Chart: geom_area()
+
+###2)Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+Prediction: Two different geommetrical funtions are used. The x and y axises are defined in ggplot() and apply to both. Color that adds a 3rd variable is also added here so both geom funtions should be color coded by drv.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+Prediction check: se = FALSE controls whether the grey bands are displayed which show the variation. 
+
+###3)What does show.legend = FALSE do? What happens if you remove it? Why do you think I used it earlier in the chapter?
+show.legend = FALSE removes the legend from the graph. If you remove that line, the legend appears which is the default. I'm guessing it was used earlier in the chapter to create a simpler illustration of how geom_smooth() works.
+```{r}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, color = drv), show.legend = FALSE)
+```
+
+###4 What does the se argument to geom_smooth() do?
+The se argument displays grey area to show the distribution of the observations.
+
+###5) Will these two graphs look different? Why/why not?
+The two graphs look the same. The x and y axises are just defined differently. The first one sets x and y globally. The second sets x and y for each geometric funtion, but they are mapped the same. 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+###6) 
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(stroke = 2) +
+  geom_smooth(se = FALSE)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_smooth(aes(group = drv), se = FALSE) +
+  geom_point(stroke = 2)
+
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_smooth(se = FALSE) +
+  geom_point(stroke = 2)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_smooth(se = FALSE, size = 2) +
+  geom_point(aes(color = drv), stroke = 2)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_smooth(aes(linetype = drv), se = FALSE, size = 2) +
+  geom_point(aes(color = drv), stroke = 2)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(color = drv), stroke = 2, fill = 3)
+```
+
+
+##Section 3.7.1: #2 only
+###2) What does geom_col() do? How is it different to geom_bar()?
+Geom_col creates a stacked bar where you have to define y. Each grouping of y is represented by a different color/shade. Geom_bar uses a count rather than defining y. 
+
+```{r}
+ggplot(diamonds) +
+  geom_col(aes(x = cut, y = price))
+```
+
+```{r}
+ggplot(diamonds) +
+  geom_bar(aes(x = cut))
+```
+
+
+## Extra Credit: Look at the data graphics at the following link: What is a Data Scientist. Please briefly critique the designer’s choices. What works? What doesn’t work? What would you have done differently?
+
+####What works:
+- The heading for each section states the key finding from the visualizations below them. 
+- The graphs/charts are reasonably simplistic and don't show overwhelming amounts of data. 
+
+####What doesn't work:
+- Donut chart is difficult to compare pieces/slices to each other. Small sections aren't represented clearly. 
+- The area blocks are difficult to distingush. The values are so close to eachother, it doesn't make sense to visualize them this way when they're so similar.
+- The bar charts show far too many charts. Grouping the data into 1 or 2 charts/graphs would be easier to read and compare than 10 invidual charts. 
+
+####Do differently:
+- All visualizations are a shade of blue. Another color to highlight key insights would be extremely helpful.
+- The top of the infographic doesn't define the problem well. It's not summarized at the top what the study is about. Having just a paragraph is too verbose.
+- The end could use a summary of the key learnings. 
