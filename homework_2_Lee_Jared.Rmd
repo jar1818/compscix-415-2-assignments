@@ -261,7 +261,7 @@ ggplot(diamonds) +
 
 
 ## Extra Credit: Look at the data graphics at the following link: What is a Data Scientist. Please briefly critique the designer’s choices. What works? What doesn’t work? What would you have done differently?
-
+ 
 ####What works:
 - The heading for each section states the key finding from the visualizations below them. 
 - The graphs/charts are reasonably simplistic and don't show overwhelming amounts of data. 
