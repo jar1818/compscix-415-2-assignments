@@ -240,8 +240,8 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 ```
 
 ```{r}
-ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_point(aes(color = drv), stroke = 2, fill = 3)
+ggplot(mpg, aes(x = displ, y = hwy, fill = drv)) +
+  geom_point(stroke = 2, shape = 21, color = 'white')
 ```
 
 
@@ -275,3 +275,8 @@ ggplot(diamonds) +
 - All visualizations are a shade of blue. Another color to highlight key insights would be extremely helpful.
 - The top of the infographic doesn't define the problem well. It's not summarized at the top what the study is about. Having just a paragraph is too verbose.
 - The end could use a summary of the key learnings. 
+
+
+
+
+
