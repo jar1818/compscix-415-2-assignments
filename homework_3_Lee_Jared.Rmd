@@ -1,0 +1,151 @@
+---
+title: "homework_3_Lee_Jared"
+author: "Jared Lee"
+date: "6/19/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Loading Packages
+```{r}
+library(tidyverse)
+library(nycflights13)
+library(dplyr)
+```
+
+
+##Section 3.8.1: all exercises
+### 1) What is the problem with this plot? How could you improve it?
+Answer: There are overlapping points which hides the number of actual values. By using the geom_jitter function, you can see all of the points plotted.
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_jitter()
+```
+
+###2) What parameters to geom_jitter() control the amount of jittering?
+Answer: Width and Height control the amount of jittering
+
+```{r}
+?geom_jitter()
+```
+
+###3) Compare and contrast geom_jitter() with geom_count().
+Answer: geom_jitter() will plot each individual point separately. geom_count() will show an increased size for points that have higher frequency. 
+```{r}
+?geom_count()
+```
+
+###4) What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
+Answer: REVISIT THIS!! (dodge is default)
+```{r}
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = drv, y = hwy), position = "identity")
+```
+
+
+##Section 3.9.1: #2 and #4 only
+### 2) What does labs() do? Read the documentation.
+Answer: Allows customization of axis and legend labels. 
+
+### 4) What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
+Answer: Highway miles always exceeds City miles but not a perfect ratio does not apply to all cars. 
+coord_fixed() specifies the relationship between the x and y coordinates so the marks on the axises have a consistant spacing and number values. 
+geom_abline() displays a line specified by slope and intercept.
+
+##Section 4.4: #1 and #2 only 
+
+###1) Why does this code not work?
+Answer: The "ı" character should be an "i"
+
+###2) Tweak each of the following R commands so that they run correctly:
+Answer:
+```{r}
+library(tidyverse)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+filter(mpg, cyl == 8)
+filter(diamonds, carat > 3)
+```
+
+
+
+##Section 5.2.4: #1, #3 and #4 only. You will need to install the nycflights13 package and use the flights data.
+
+##1) Find all flights that
+
+###a) Had an arrival delay of two or more hours
+```{r}
+(a <- filter(flights, arr_delay >= 120))
+```
+
+
+###b) Flew to Houston (IAH or HOU)
+```{r}
+(b <- filter(flights, dest %in% c("IAH", "HOU")))
+```
+
+
+###c) Were operated by United, American, or Delta
+```{r}
+(c <- filter(flights, carrier %in% c("UA", "AA", "DL")))
+```
+
+###d) Departed in summer (July, August, and September)
+```{r}
+(d <- filter(flights, month %in% c(7,8,9)))
+```
+
+
+###e) Arrived more than two hours late, but didn’t leave late
+```{r}
+(e <- filter(flights, arr_delay > 120, dep_delay <= 0))
+```
+
+
+###f) Were delayed by at least an hour, but made up over 30 minutes in flight
+```{r}
+(f <- filter(flights, dep_delay >= 60, arr_delay <= dep_delay - 30))
+```
+
+
+###g) Departed between midnight and 6am (inclusive)
+```{r}
+(g <- filter(flights, dep_time >= 000 & dep_time <= 600))
+```
+
+
+##3) How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+Answer: 8,255 flights missing a dep_time. dep_delay, arr_time, arr_delay, tailnum, and air_time have NA values also. They may represent cancelled flights. 
+```{r}
+filter(flights, is.na(dep_time))
+```
+
+
+##4) Why is NA ^ 0 not missing? Why is NA | TRUE not missing? Why is FALSE & NA not missing? Can you figure out the general rule? (NA * 0 is a tricky counterexample!)
+Answer: Any number to the zero power is 1. 
+
+##Section 5.4.1: #1 and #3 only
+
+###1)Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+```
+```{r}
+select(flights, starts_with("dep"), starts_with("arr"))
+```
+```{r}
+select(flights, dep_time:arr_delay, -sched_dep_time, -sched_arr_time)
+```
+
+
+###3)What does the one_of() function do? Why might it be helpful in conjunction with this vector?
+
+
+
