@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 Loading Packages
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(nycflights13)
 library(dplyr)
@@ -37,14 +37,22 @@ Answer: Width and Height control the amount of jittering
 ###3) Compare and contrast geom_jitter() with geom_count().
 Answer: geom_jitter() will plot each individual point separately. geom_count() will show an increased size for points that have higher frequency. 
 ```{r}
-?geom_count()
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_count()
 ```
 
 ###4) What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
-Answer: REVISIT THIS!! (dodge is default)
+Answer: Position = "dodge" is the default. 
+
+The geom_boxplot() looks the same with or without defining position = "dodge".
 ```{r}
+#Position undefined. 
 ggplot(data = mpg) + 
-  geom_boxplot(mapping = aes(x = drv, y = hwy), position = "identity")
+  geom_boxplot(mapping = aes(x = drv, y = hwy))
+
+#Position = "dodge"
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = drv, y = hwy), position = "dodge")
 ```
 
 
@@ -53,7 +61,7 @@ ggplot(data = mpg) +
 Answer: Allows customization of axis and legend labels. 
 
 ### 4) What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
-Answer: Highway miles always exceeds City miles but not a perfect ratio does not apply to all cars. 
+Answer: With more Highway mileage, City mileage also improves. 
 coord_fixed() specifies the relationship between the x and y coordinates so the marks on the axises have a consistant spacing and number values. 
 geom_abline() displays a line specified by slope and intercept.
 
@@ -65,15 +73,17 @@ Answer: The "ı" character should be an "i"
 ###2) Tweak each of the following R commands so that they run correctly:
 Answer:
 ```{r}
-library(tidyverse)
-
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy))
-
-filter(mpg, cyl == 8)
-filter(diamonds, carat > 3)
 ```
 
+```{r warning=FALSE, message=FALSE}
+filter(mpg, cyl == 8)
+```
+
+```{r}
+filter(diamonds, carat > 3)
+```
 
 
 ##Section 5.2.4: #1, #3 and #4 only. You will need to install the nycflights13 package and use the flights data.
@@ -117,12 +127,13 @@ filter(diamonds, carat > 3)
 
 ###g) Departed between midnight and 6am (inclusive)
 ```{r}
-(g <- filter(flights, dep_time >= 000 & dep_time <= 600))
+(g <- filter(flights, dep_time == 2400 | dep_time <= 600))
 ```
 
 
 ##3) How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
-Answer: 8,255 flights missing a dep_time. dep_delay, arr_time, arr_delay, tailnum, and air_time have NA values also. They may represent cancelled flights. 
+Answer: 8,255 flights missing a dep_time. 
+dep_delay, arr_time, arr_delay, tailnum, and air_time have NA values also. They may represent cancelled flights. 
 ```{r}
 filter(flights, is.na(dep_time))
 ```
@@ -130,6 +141,9 @@ filter(flights, is.na(dep_time))
 
 ##4) Why is NA ^ 0 not missing? Why is NA | TRUE not missing? Why is FALSE & NA not missing? Can you figure out the general rule? (NA * 0 is a tricky counterexample!)
 Answer: Any number to the zero power is 1. 
+NA | TRUE returns TRUE because the right side is already defaulted to TRUE.
+FALSE & NA returns FALSE because the left side is defaulted to FALSE
+NA seems to assume that the value would be a number. The counter example (NA * 0 = NA) otherwise shows that the value is not a real number since it should equal zero. 
 
 ##Section 5.4.1: #1 and #3 only
 
@@ -146,6 +160,5 @@ select(flights, dep_time:arr_delay, -sched_dep_time, -sched_arr_time)
 
 
 ###3)What does the one_of() function do? Why might it be helpful in conjunction with this vector?
-
-
+Answer: one_of() allows you to select variables in a vector. It might be helpful to define which variables in a vector and save it as an object, rather than write a select statement each time you need those columns. 
 
