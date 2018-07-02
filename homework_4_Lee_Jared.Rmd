@@ -1,0 +1,173 @@
+---
+title: "homework_4_Lee_Jared"
+author: "Jared Lee"
+date: "6/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(mdsr)
+library(nycflights13)
+library(tidyr)
+```
+
+##Section 5.6.7: #2, #4 and #6 only. Extra Credit: Do #5
+###2) Come up with another approach that will give you the same output as not_cancelled %>% count(dest) and not_cancelled %>% count(tailnum, wt = distance) (without using count()).
+
+```{r}
+#create not_cancelled to filter NA values from dep_delay, arr_delay
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+#same output as: not_cancelled %>% count(dest)
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarize(n = n())
+
+#same output as: not_cancelled %>% count(tailnum, wt = distance)
+not_cancelled %>%
+  group_by(tailnum) %>%
+  summarize(n = sum(distance))
+```
+
+
+###4) Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+```{r}
+#cancelled flights per day
+(avg_day <- flights %>% 
+  group_by(day) %>%
+  summarize(cnl_pct = mean(is.na(dep_delay)),
+            all_flights = n(),
+            cnl_flights = sum(is.na(dep_delay))))
+
+
+ggplot(avg_day) + 
+  geom_point(aes(day, cnl_flights), color = "red") +
+  geom_point(aes(day, all_flights))
+```
+
+
+###6) What does the sort argument to count() do. When might you use it?
+Answer: It can order the count by decending or ascending order
+
+
+###5 Extra Credit) Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about flights %>% group_by(carrier, dest) %>% summarise(n()))
+Answer: Overall, F9,EV, and YV are the airlines with the worst delays (highest average delay). Adding in the airports of origin, EWR and LGA perform the worst.
+```{r}
+(flights %>% 
+  group_by(carrier, origin) %>%
+  summarize(count = n(),
+            avg_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  arrange(desc(avg_delay)))
+
+```
+
+
+##Section 10.5: #1, #2, #3 and #6 only
+###1) How can you tell if an object is a tibble? (Hint: try printing mtcars, which is a regular data frame).
+Answer: Printing a tibble will display the first 10 rows, then summarize the rest of the data. A dataframe will display the entire data set. 
+
+###2)Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
+Answer: Data frames allow partial matching. So you can request "x" and it will return "xyz". There may be frustration as data frames may change the type of inputs or variables and can create new row names. 
+```{r}
+#output for data frame
+df <- data.frame(abc = 1, xyz = "a")
+print(df)
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+```{r}
+#output for tibble
+tbl <- as.tibble(df)
+print(tbl)
+tbl$x
+tbl[, "xyz"]
+tbl[, c("abc", "xyz")]
+```
+
+
+###3)If you have the name of a variable stored in an object, e.g. var <- "mpg", how can you extract the reference variable from a tibble?
+
+```{r}
+var <- "mpg"
+var %>% .[[1]]
+```
+
+
+###6)What option controls how many additional column names are printed at the footer of a tibble?
+Answer: n = 
+```{r}
+mpg %>% print(n =10, width = Inf)
+```
+
+
+
+##Section 12.3.3: #2, #3 and #4 only
+###2) Why does this code fail?
+Answer: 1999 and 2000 need tick marks as they are non-syntactic names which don't start with a letter.
+
+###3) Why does spreading this tibble fail? How could you add a new column to fix the problem?
+Answer: each row needs to be a separate observation. In this case, "Phillip Woods" has two ages. You can add a separate columne for date that has a unique age. 
+
+
+###4) Tidy the simple tibble below. Do you need to spread or gather it? What are the variables?
+Answer: Gather. Variables are "pregnant" and "gender"
+
+
+##Section 12.4.3: #1 and #2 only
+###1) What do the extra and fill arguments do in separate()? 
+Answer: Extra addresses the instances where there are more values than there are columns. You can choose to remove  or merge the extra values.
+Fill addresses instances where there are not enough values to fill all of the defined columns. You can fill to the left or right to duplicate values to fill those values.
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"))
+```
+
+
+
+###2) Both unite() and separate() have a remove argument. What does it do? Why would you set it to FALSE?
+
+Answer: 
+The remove argument if set to FALSE, will keep the existing column and adds the separated values (or united values). You may need to keep the existing calculation (using separate) or keep the old columns (using unite) if you need those values elsewhere instead of replacing them. 
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), remove = FALSE)
+```
+
+
+
+##Answer these questions:
+
+###Follow these steps:
+####- Download the baby_names.txt file from Canvas which is in the Homework 4 assignment section.
+####- Load this file into R correctly and take a glimpse of the output.
+####- Export this file as a csv file and call it ‘baby_names.csv’.
+####- Reload the baby_names.csv file and take another glimpse.
+####- Show all of your code and the output. There should be two data import lines of code, one data export line of code, and two glimpses of the data.
+
+```{r}
+#Import txt file
+file_path <- '/users/jalee/desktop/baby_names.txt'
+csv_data <- read_csv(file = file_path)
+
+#glimpse txt file
+glimpse(csv_data)
+
+#export to csv
+write.csv(csv_data, "/users/jalee/desktop/baby_names.csv")
+
+#Import csv file
+file_path_csv <- '/users/jalee/desktop/baby_names.csv'
+csv_data1 <- read_csv(file = file_path_csv)
+
+#glimpse csv file
+glimpse(csv_data1)
+```
+
