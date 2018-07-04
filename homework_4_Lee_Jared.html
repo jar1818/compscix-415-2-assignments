@@ -325,6 +325,20 @@ var %&gt;% .[[1]]</code></pre>
 <div id="tidy-the-simple-tibble-below.-do-you-need-to-spread-or-gather-it-what-are-the-variables" class="section level3">
 <h3>4) Tidy the simple tibble below. Do you need to spread or gather it? What are the variables?</h3>
 <p>Answer: Gather. Variables are “pregnant” and “gender”</p>
+<pre class="r"><code>preg &lt;- tribble(
+  ~pregnant, ~male, ~female,
+  &quot;yes&quot;,     NA,    10,
+  &quot;no&quot;,      20,    12
+)
+
+tidyup &lt;- gather(preg, key = gender, male, female, value = count)
+
+glimpse(tidyup)</code></pre>
+<pre><code>## Observations: 4
+## Variables: 3
+## $ pregnant &lt;chr&gt; &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;
+## $ gender   &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;female&quot;, &quot;female&quot;
+## $ count    &lt;dbl&gt; NA, 20, 10, 12</code></pre>
 </div>
 </div>
 <div id="section-12.4.3-1-and-2-only" class="section level2">
