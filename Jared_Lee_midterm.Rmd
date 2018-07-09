@@ -1,0 +1,242 @@
+---
+title: "COMPSCIX 415.2 Homework 5/Midterm"
+author: "Jared Lee"
+date: "7/3/2018"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+[Link to my GitHub](https://github.com/jar1818/compscix-415-2-assignments)
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+```
+##RStudio and R Markdown (3 points)
+###1) Use markdown headers in your document to clearly separate each midterm question and add a table of contents to your document.
+Done - TOC at the top of the page.
+
+##The tidyverse packages (3 points)
+###1) Can you name which package is associated with each task below?
+1a) Plotting - ggplot2
+
+1b) Data munging/wrangling - dplyr
+
+1c) Reshaping (speading and gathering) data - tidyr
+
+1d) Importing/exporting data - readr
+
+###2) Now can you name two functions that you’ve used from each package that you listed above for these tasks?
+2a) Plotting - geom_point(), geom_boxplot()
+
+2b) Data munging/wrangling - mutate(), filter()
+
+2c) Reshaping data - gather(), spread()
+
+2d) Importing/exporting data - read_csv(), write_csv()
+
+##R Basics (1.5 points)
+###1) Fix this code with the fewest number of changes possible so it works:
+```{r}
+#remove exclaimation point
+My_data.name___is.too00ooLong <- c( 1 , 2   , 3 )
+```
+
+###2) Fix this code so it works:
+```{r}
+#add tick mark at the end of 'it'
+my_string <- c('has', 'an', 'error', 'in', 'it')
+```
+
+###3) Look at the code below and comment on what happened to the values in the vector.
+```{r}
+# The values in the vector are all converted to Charactors as opposed to being Numeric. 
+my_vector <- c(1, 2, '3', '4', 5)
+glimpse(my_vector)
+```
+
+
+##Data import/export (3 points)
+###1) Download the rail_trail.txt file from Canvas (in the Midterm Exam section) and successfully import it into R. Prove that it was imported successfully by including your import code and taking a glimpse of the result.
+```{r}
+#Import txt file from desktop
+file_path <- '/users/jalee/desktop/rail_trail.txt'
+txt_data <- read_csv(file = file_path)
+
+#glimpse data
+glimpse(txt_data)
+```
+
+
+###2) Export the file into a comma-separated file and name it “rail_trail.csv”. Make sure you define the path correctly so that you know where it gets saved. Then reload the file. Include your export and import code and take another glimpse.
+```{r}
+#export to csv
+write_csv(txt_data, "/users/jalee/desktop/rail_trail.csv")
+
+#import csv file
+file_path_csv <- '/users/jalee/desktop/rail_trail.csv'
+csv_data <- read_csv(file = file_path_csv)
+
+#glimpse csv file
+glimpse(csv_data)
+```
+
+##Visualization (6 points)
+###1) Critique this graphic: give only three examples of what is wrong with this graphic. Be concise.
+1a) Using the areas of circles to compare numbers makes it difficult to visualize the differnce. Bar graphs that have a clear x and y axis for measurements are a better alternative.  
+
+1b) The age statistic and the gender statistic are not mutually exclusive metrics, yet they are displayed separately. Instead, the visual should show the proportion of men and women among the different age groups. 
+
+1c) Purple and orange colors for men and women are non-sensical as they indicate that a 3rd variable is present. There are two variables: age and gender. However, with 3 colors (black, purple, orange), the graphic implies there are 3 variables. 
+
+###2) Reproduce this graphic using the diamonds data set.
+```{r}
+ggplot(diamonds, aes(cut, carat, fill = color)) +
+  geom_boxplot(position = "identity") +
+  xlab('CUT OF DIAMOND') +
+  ylab('CARAT OF DIAMOND') +
+  coord_flip()
+```
+
+###3) The previous graphic is not very useful. We can make it much more useful by changing one thing about it. Make the change and plot it again.
+
+```{r}
+#To prevent overlapping (which hides may of the plots), use position = dodge to separate them. 
+ggplot(diamonds, aes(cut, carat, fill = color)) +
+  geom_boxplot(position = "dodge") +
+  xlab('CUT OF DIAMOND') +
+  ylab('CAROT OF DIAMOND') +
+  coord_flip()
+```
+
+##Data munging and wrangling (6 points)
+###1) Is this data “tidy”? If yes, leave it alone and go to the next problem. If no, make it tidy. Note: this data set is called table2 and is available in the tidyverse package. It should be ready for you to use after you’ve loaded the tidyverse package.
+```{r}
+#The data is NOT tidy because each variable should have it's own column, thus making each row represent one observation. 
+table2 %>% spread(key = type, value = count)
+```
+
+###2) Create a new column in the diamonds data set called price_per_carat that shows the price of each diamond per carat (hint: divide). Only show me the code, not the output.
+```{r}
+#Code below
+price_per_carat <- diamonds %>% mutate(price_per_carat = price/carat)
+```
+
+
+###3) For each cut of diamond in the diamonds data set, how many diamonds, and what proportion, have a price > 10000 and a carat < 1.5? There are several ways to get to an answer, but your solution must use the data wrangling verbs from the tidyverse in order to get credit.
+
+```{r}
+#The below code outputs the number of diamonds fitting description (price > 10k, carat < 1.5) and proportion by cut. 
+diamonds %>% 
+  mutate(small_10k = (price > 10000 & carat < 1.5)) %>%
+  select(cut, price, carat, small_10k) %>%
+  dplyr::group_by(cut) %>%
+  summarize(total_cnt = n(), fit = sum(small_10k)) %>%
+  mutate(proportion = fit/total_cnt)
+```
+
+####Do the results make sense? Why? 
+It makes sense that there are more quality cut diamonds with the higher price point. $10k is quite high for a smaller sized diamond, so it must have an excellent cut (among other qualities) to justify the higher price. 
+
+####Do we need to be wary of any of these numbers? Why?
+There are other factors that impact the price of the diamonds including clarity and color. Basing data on only cut and carat may be misleading. Also, there is some missing data where a diamond is missing the x, y, and z values. This could mean there are other errors in the data.
+
+```{r}
+diamonds %>%
+  filter(price > 10000 & carat < 1.5) %>%
+  filter(x == 0 | y== 0 | z == 0)
+```
+
+
+##EDA (6 points)
+###Take a look at the txhousing data set that is included with the ggplot2 package and answer these questions:
+
+####During what time period is this data from?
+Answer: The time period is from January 2000 to July 2015.
+```{r}
+#arrange by earliest year
+txhousing %>% arrange((date))
+#arrange by most recent year
+txhousing %>% arrange(desc(date))
+```
+
+####How many cities are represented?
+Answer: 46
+```{r}
+#count number of unique cities
+txhousing %>% 
+  distinct(city) %>%
+  count()
+```
+
+####Which city, month and year had the highest number of sales?
+Answer: Houston, 2015, July
+```{r}
+txhousing %>%
+  group_by(city, year, month) %>%
+  summarize(sales) %>%
+  arrange(desc(sales)) %>%
+  head(n=5)
+```
+
+####What kind of relationship do you think exists between the number of listings and the number of sales? Check your assumption and show your work.
+Answer: I'd expect the number of sales to be fairly linear with the number of listings. From graphing the data, the two are closely related until it reaches an inflection point around 18,000 listings and the number of sales becomes more flat. 
+```{r}
+txhousing %>% 
+  filter(!is.na(sales)) %>%
+  filter(!is.na(listings)) %>%
+  ggplot(aes(listings, sales)) +
+  geom_point(alpha = 1/10) +
+  geom_smooth()
+```
+
+####What proportion of sales is missing for each city?
+```{r}
+#Calculated the Proportion of missing sales for each city under the "prop_missing" column.
+txhousing %>%
+  group_by(city) %>%
+  summarize(count = n(),
+            missing_sales = sum(is.na(sales)),
+            prop_missing = missing_sales/count) %>% 
+  arrange(desc(prop_missing))
+```
+
+
+####Looking at only the cities and months with greater than 500 sales:
+####Are the distributions of the median sales price (column name median), when grouped by city, different? The same? Show your work.
+```{r}
+#Distributions of median sales prices are different as the cities have differing interquartile ranges. 
+txhousing %>%
+  filter(sales > 500) %>%
+  group_by(city,median) %>%
+  summarize() %>%
+  ggplot() +
+  geom_boxplot(aes(city, median)) +
+  coord_flip()
+```
+
+####Any cities that stand out that you’d want to investigate further?
+Denton County, Dalles and Colin County appear to have many outliers. It'd be intersting to see the IQR when including the outliers. 
+
+####Why might we want to filter out all cities and months with sales less than 500?
+With the high volume of sales less than 500, it's difficult to reveal any insights. When the data gets more sparce, you can better see what independent variables might drive the prices. 
+```{r}
+ggplot(txhousing, aes(sales)) + 
+  geom_bar(binwidth = 500)
+
+```
+
+
+##Git and Github (1.5 points)
+###To demonstrate your use of git and Github, at the top of your document put a hyperlink to your Github repository.
+Link at the top of the document.
+
+###Once you are finished with your midterm, commit your final changes with the comment “finished the midterm - woohoo” and push your R Markdown file and your html or pdf file to Github.
+Done.
