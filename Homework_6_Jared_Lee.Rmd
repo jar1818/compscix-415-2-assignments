@@ -1,0 +1,163 @@
+---
+title: "Homework_6_Jared_Lee"
+author: "Jared Lee"
+date: "7/12/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(mosaicData)
+library(ggplot2)
+```
+##Exercise 1
+###1) What variables are in this data set?
+Answer: outcome, smoker, age
+
+###2) How many observations are there and what does each represent?
+Answer: 1,314 obervations representing individuals regarding survival status (dead, alive), smoker or nonsmoker, and age in years.
+
+###3) Create a table (use the R code below as a guide) and a visualization of the relationship between smoking status and outcome, ignoring age. What do you see? Does it make sense?
+Answer: I would expect the number of deaths to be higher for smokers. Non-smoker death proportion is 31% vs 24% for smokers. I would say that it does not make sense.
+
+```{r}
+Whickham %>% 
+  count(smoker, outcome)
+
+Whickham %>% 
+  count(smoker, outcome) %>%
+  ggplot() +
+  geom_point(aes(smoker, n, color = outcome)) +
+  ylab("count")
+
+```
+
+###4)Recode the age variable into an ordered factor with three categories: age <= 44, age > 44 & age <= 64, and age > 64. Now, recreate visualization from above, but facet on your new age factor. What do you see? Does it make sense?
+Answer: The number of deaths for the 65+ age group exceeds the alive numbers. This makes more sense as health symptoms may be accelorate a decline in health later in life.
+
+```{r}
+Whickham_age <- Whickham %>% mutate(grp_age = case_when(age <= 44 ~ '44 or less',
+                                                      age > 44 & age <= 64 ~ '45 to 64',
+                                                      age > 64 ~ '65+'))
+
+Whickham_age %>% 
+  count(smoker, outcome, grp_age) %>%
+  ggplot() +
+  geom_point(aes(smoker, n, color = outcome)) +
+  facet_wrap(~grp_age)
+
+```
+
+##Exercise 2
+###1) Generate a random sample of size n = 10000 from a gamma(1,2) distribution and plot a histogram or density curve. Use the code below to help you get your sample.
+```{r}
+n <- 10000
+
+# look at ?rgamma to read about this function
+(gamma_samp <- tibble(x = rgamma(n, shape = 1, scale = 2)))
+
+gamma_samp %>% 
+  ggplot() + 
+  geom_histogram(aes(x))
+
+```
+
+
+###2) What is the mean and standard deviation of your sample? They should both be close to 2 because for a gamma distribution:
+```{r}
+(mean_samp <- gamma_samp %>% .[['x']] %>% mean())
+
+(sd_samp <- gamma_samp %>% .[['x']] %>% sd())
+```
+
+
+###3) Pretend the distribution of our population of data looks like the plot above. Now take a sample of size n = 30 from a Gamma(1,2) distribution, plot the histogram or density curve, and calculate the mean and standard deviation.
+
+```{r}
+samp30 <- gamma_samp %>% 
+  sample_n(30)
+
+samp30 %>%
+  ggplot() + 
+  geom_histogram(aes(x))
+
+(mean_samp1 <- samp30 %>% .[['x']] %>% mean())
+
+(sd_samp1 <- samp30 %>% .[['x']] %>% sd())  
+  
+```
+
+
+###4) Take a sample of size n = 30, again from the Gamma(1,2) distribution, calculate the mean, and assign it to a vector named mean_samp. Repeat this 10000 times!!!! The code below might help.
+
+```{r}
+# create a vector with 10000 NAs
+mean_samp2 <- rep(NA, 10000)
+
+# start a loop
+for(i in 1:10000) {
+  g_samp <- rgamma(30, shape = 1, scale = 2)
+  mean_samp2[i] <- mean(g_samp)
+}
+# Convert vector to a tibble
+(mean_samp2 <- tibble(mean_samp2))
+
+View(mean_samp2)
+```
+
+
+###5) Make a histogram of your collection of means from above (mean_samp).
+```{r}
+mean_samp2 %>%
+  ggplot() +
+  geom_histogram((aes(mean_samp2)))
+
+
+```
+
+###6) Calculate the mean and standard deviation of all of your sample means.
+
+```{r}
+(mean_a <- mean_samp2 %>% .[['mean_samp2']] %>% mean())
+
+(sd_a <- mean_samp2 %>% .[['mean_samp2']] %>% sd())  
+```
+
+
+###7) Did anything surprise you about your answers to #6?
+Answer: The SD is very low. Eariler it was closer to 2
+
+###8) Repeat #4-#6, but now with a sample of size n = 300 instead. Do your results match up well with the theorem?
+Answer: Distribution is still normal.
+```{r}
+# create a vector with 10000 NAs
+mean_samp2 <- rep(NA, 10000)
+
+# start a loop
+for(i in 1:10000) {
+  g_samp <- rgamma(300, shape = 1, scale = 2)
+  mean_samp2[i] <- mean(g_samp)
+}
+
+# Convert vector to a tibble
+(mean_samp2 <- tibble(mean_samp2))
+
+View(mean_samp2)
+
+#Histogram
+mean_samp2 %>%
+  ggplot() +
+  geom_histogram((aes(mean_samp2)))
+
+#Find Mean and SD
+(mean_a <- mean_samp2 %>% .[['mean_samp2']] %>% mean())
+
+(sd_a <- mean_samp2 %>% .[['mean_samp2']] %>% sd())  
+```
+
+
+

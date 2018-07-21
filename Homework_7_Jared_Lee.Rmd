@@ -1,0 +1,69 @@
+---
+title: "Homework_7_Jared_Lee"
+author: "Jared Lee"
+date: "7/18/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(broom)
+library(readr)
+library('rvest')
+library(xml2)
+library(dbplyr)
+library(knitr)
+library(tidyr)
+library(readr)
+```
+
+##Exercise 1
+###Load the train.csv dataset into R. How many observations and columns are there?
+1460 observations. 81 variables
+```{r} 
+file_path <- '/Users/jalee/downloads/train.csv'
+train_data <- read_csv(file = file_path)
+
+glimpse(train_data)
+```
+
+
+##Exercise 2
+###Our target will be SalePrice.
+
+####Visualize the distribution of SalePrice.
+```{r}
+train_data %>% 
+  ggplot(aes(SalePrice)) +
+  geom_histogram()
+```
+
+####Visualize the covariation between SalePrice and Neighborhood.
+```{r}
+train_data %>%
+  ggplot() +
+  geom_point(aes(SalePrice, Neighborhood))
+```
+
+
+####Visualize the covariation between SalePrice and OverallQual.
+```{r}
+
+```
+
+##Exercise 3
+###take a look at the coefficient,
+###compare the coefficient to the average value of SalePrice, and
+###take a look at the R-squared.
+
+##Exercise 4
+
+
+##Exercise 5 (OPTIONAL)
+
+
+##Exercise 6
