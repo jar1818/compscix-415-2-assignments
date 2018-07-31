@@ -1,0 +1,54 @@
+---
+title: "Homework_8_Jared_Lee"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(ggmap)
+library(leaflet)
+library(shiny)
+library(jsonlite)
+library(curl)
+library(tidyverse)
+```
+
+
+#API for bike data
+```{r}
+#Download veloh location through the API
+getvelohdata <- function(contract_name) {
+        url <- paste0("https://api.jcdecaux.com/vls/v1/stations?contract=",contract_name,"&apiKey=7acdafd0603bb4fe2c053b85a5cae11468ec6434")
+        df_api = jsonlite::fromJSON(url)
+        position.lng = df_api$position$lng
+        position.lat = df_api$position$lat
+        df_api = cbind(df_api %>% select(-position), position.lng, position.lat) %>%
+                mutate( name = trimws(gsub("[0-9-]"," ", name)),
+                        #address = paste0("<a href='https://www.google.com/maps/search/?api=1&query=",position.lat,",",position.lng,"' target='_blank'>",address,"</a>"),
+                        address = paste0("<a href='https://www.openstreetmap.org/?mlat=",position.lat,"&mlon=",position.lng,"#map=15/",position.lat,"/",position.lng,"' target='_blank'>",address,"</a>"),
+                        title_attrib = paste0("Name: ",name,"<br>Adress: ",address,"<br>Available: ",available_bikes,"/",bike_stands),
+                        color= ifelse(status != "OPEN", "red","blue"),
+                        available_bike_stands = ifelse(color=="red",0,available_bikes))
+        return(df_api)
+}
+
+is.data.frame(getvelohdata)
+
+```
+
+#Map
+```{r}
+geo_city <- geocode("Seattle, WA") #geocode city
+#bike_data <- fromJSON(getvelohdata, flatten = TRUE)
+cities <- c('Luxembourg', 'Dublin', 'Brisbane', 'Seville', 'Stockholm', 'Ljubljana')
+
+(map_it <- leaflet() %>%
+    addTiles() %>%
+    addMarkers(lng = ~lon, lat = ~lat, data = geo_city))
+
+```
+
