@@ -1,0 +1,231 @@
+---
+title: "COMPSCIX 415.2 Homework 9/Final - Jared Lee"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(broom)
+```
+
+###Exercise 1
+####Step 1
+```{r}
+# sample size
+samp_size <- 100
+# set the rate parameter
+samp_rate <- 1/10000
+# take sample
+samp <- rexp(n = samp_size, rate = samp_rate)
+
+#Mean of sample
+mean(samp)
+#Standard Deviation
+sd(samp)
+
+#Helper code
+samp_fun <- function(samp_size, samp_rate) {
+  samp_avg <- mean(samp)
+  samp_std_dev <- sd(samp)
+
+  stats <- list(samp_avg = samp_avg, samp_std_dev = samp_std_dev)
+  return(stats)
+}
+
+samp_fun()
+
+```
+####Step 2
+```{r}
+
+n <- 1000 #set value to loop n number of times
+new_samp_size <- 50 #new sample size
+samp_rate <- 1/10000 #same sample rate as before
+sample_means <- rep(NA, n) # empty vector for saving means
+sample_sds  <- rep(NA, n) # empty vector for saving sds
+
+#Loop 1000 times. Save vectors as sample_means, sample_sds. Did not use Function.
+for(i in 1:n) {
+  pull_sample <- rexp(n = new_samp_size, rate = samp_rate)
+    samp_avg <- mean(pull_sample)
+    samp_std_dev <- sd(pull_sample)
+  
+    sample_means[[i]] <- samp_avg #store means
+    sample_sds[[i]] <- samp_std_dev #store sds
+}
+
+#Loop 1000 times with function. *Could not get Function working
+sample_means1 <- rep(NA, n) # empty vector for saving means
+sample_sds1  <- rep(NA, n) # empty vector for saving sds
+
+for(i in 1:n) {
+  samp_fun1 <- function(new_samp_size, samp_rate) {
+    pull_sample <- rexp(n = new_samp_size, rate = samp_rate)
+    samp_avg1 <- mean(pull_sample)
+    samp_std_dev1 <- sd(pull_sample)
+    sample_means1[[i]] <- samp_avg1
+    sample_sds1[[i]] <- samp_std_dev1
+  }
+}
+
+```
+
+####Step 3
+```{r}
+#Plot sample means as Histogram
+mean_sd_values <- data.frame(mean = sample_means, sd = sample_sds)
+mean_sd_values %>%
+  ggplot(aes(x = mean)) +
+  geom_histogram()
+
+#Output SD of sample means
+sd(mean_sd_values[[1]])
+
+#Calculate the theoretical standard error
+10000/sqrt(1000)
+
+#calculate the mean of the sample standard deviations and use this to calculate the empirical standard error
+(mean_of_sd <- mean(mean_sd_values[[2]]))
+
+# 68% within 1 Std Deviation
+mean_of_sd
+# 95% within 2 Std Deviation
+2 * mean_of_sd
+# 99.7% within 3 Std Deviation
+3 * mean_of_sd
+
+```
+
+
+####Step 4
+```{r}
+#Sample Size 500
+#Step 2 (500)
+n <- 1000 #set value to loop n number of times
+new_samp_size_500 <- 500 #new sample size
+samp_rate <- 1/10000 #same sample rate as before
+sample_means <- rep(NA, n) # empty vector for saving means
+sample_sds  <- rep(NA, n) # empty vector for saving sds
+
+#Loop 1000 times. Save vectors as sample_means, sample_sds. Did not use Function.
+for(i in 1:n) {
+  pull_sample <- rexp(n = new_samp_size_500, rate = samp_rate)
+    samp_avg <- mean(pull_sample)
+    samp_std_dev <- sd(pull_sample)
+  
+    sample_means[[i]] <- samp_avg #store means
+    sample_sds[[i]] <- samp_std_dev #store sds
+}
+
+#Step 3 (500)
+#Plot sample means as Histogram
+mean_sd_values <- data.frame(mean = sample_means, sd = sample_sds)
+mean_sd_values %>%
+  ggplot(aes(x = mean)) +
+  geom_histogram()
+
+#Output SD of sample means
+sd(mean_sd_values[[1]])
+
+#Calculate the theoretical standard error
+10000/sqrt(500)
+
+#calculate the mean of the sample standard deviations and use this to calculate the empirical standard error
+(mean_of_sd <- mean(mean_sd_values[[2]]))
+
+# 68% within 1 Std Deviation
+mean_of_sd
+# 95% within 2 Std Deviation
+2 * mean_of_sd
+# 99.7% within 3 Std Deviation
+3 * mean_of_sd
+```
+
+```{r}
+#Sample Size 5k
+#Step 2 (500)
+n <- 1000 #set value to loop n number of times
+new_samp_size_5k <- 5000 #new sample size
+samp_rate <- 1/10000 #same sample rate as before
+sample_means <- rep(NA, n) # empty vector for saving means
+sample_sds  <- rep(NA, n) # empty vector for saving sds
+
+#Loop 1000 times. Save vectors as sample_means, sample_sds. Did not use Function.
+for(i in 1:n) {
+  pull_sample <- rexp(n = new_samp_size_5k, rate = samp_rate)
+    samp_avg <- mean(pull_sample)
+    samp_std_dev <- sd(pull_sample)
+  
+    sample_means[[i]] <- samp_avg #store means
+    sample_sds[[i]] <- samp_std_dev #store sds
+}
+
+#Step 3 (500)
+#Plot sample means as Histogram
+mean_sd_values <- data.frame(mean = sample_means, sd = sample_sds)
+mean_sd_values %>%
+  ggplot(aes(x = mean)) +
+  geom_histogram()
+
+#Output SD of sample means
+sd(mean_sd_values[[1]])
+
+#Calculate the theoretical standard error
+10000/sqrt(5000)
+
+#calculate the mean of the sample standard deviations and use this to calculate the empirical standard error
+(mean_of_sd <- mean(mean_sd_values[[2]]))
+
+# 68% within 1 Std Deviation
+mean_of_sd
+# 95% within 2 Std Deviation
+2 * mean_of_sd
+# 99.7% within 3 Std Deviation
+3 * mean_of_sd
+```
+
+###Exercise 2
+```{r}
+#Load train.csv
+file_path <- '/Users/jalee/downloads/train.csv'
+train_data <- read_csv(file = file_path)
+
+View(train_data)
+
+#Fit Model: y = SalePrice. Features - LotArea, OverallQual, ExterQual
+model1 <- lm(SalePrice ~ LotArea + OverallQual + ExterQual, data = train_data)
+
+#Use the broom package to output the coefficients and the R-squared
+glance(model1)
+
+#Interpret the coefficient on LotArea
+
+#Interpret the coefficient on ExterQualGd
+
+#Compare this model to the model we fit in HW 7 with GrLivArea, OverallQual, Neighborhood. Which is the better fitting model?
+model7 <- lm(SalePrice ~ GrLivArea + OverallQual + Neighborhood, data = train_data)
+glance(model7)
+```
+
+
+###Exercise 3
+```{r}
+file_path <- '/Users/jalee/downloads/ab_test_data.csv'
+ab_data <- read_csv(file = file_path)
+
+#What proportion of visitors converted for each version of the webpage?
+ab_data %>%
+  group_by(version) %>%
+  summarize(count = n(),
+            conv = sum(conversion)) %>%
+  mutate(prop = conv/count)
+
+#Perform the AB test in R. What is the p-value for the AB test (hypothesis test of proportions)?
+
+
+```
+
